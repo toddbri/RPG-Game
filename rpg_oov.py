@@ -1,61 +1,72 @@
-class Hero(object):
-    def __init__(self,h,p):
+import os
+class Character(object):
+    def __init__(self,h,p,name):
         self.health = h
         self.power = p
-        self.name="hero"
+        self.name=name
 
-    def attack(self,foe):
-        foe.health -=self.power
-        print "You do %d damage to the %s." %(self.power,foe.name)
-        if foe.health <=0:
-            print "The %s is dead" % foe.name
+    def alive(self):
+        return self.health>0
 
-
-class Goblin(object):
-    def __init__(self,h,p):
-        self.health = h
-        self.power = p
-        self.name = "goblin"
+    def print_status(self):
+        print "The %s has %d health and %d power." % (self.name,self.health, self.power)
 
     def attack(self,foe):
         foe.health -= self.power
         print "The %s does %d damage to you." % (self.name, self.power)
-        if foe.health <= 0:
+        if not foe.alive():
             print "You are dead."
-"""
-In this simple RPG game, the hero fights the goblin. He has the options to:
 
-1. fight goblin
-2. do nothing - in which case the goblin will attack him anyway
-3. flee
+class Hero(Character):
+    def attack(self,foe):
+        foe.health -=self.power
+        print "You do %d damage to the %s." %(self.power,foe.name)
+        if not foe.alive():
+            print "The %s is dead" % foe.name
 
-"""
+    def print_status(self):
+        print "You have %d health and %d power." % (self.health, self.power)
+
+class Goblin(Character):
+    pass
+
+class Zombie(Character):
+    def alive(self):
+        return True
+
+def make_choice(creature):
+    print
+    print "What do you want to do?"
+    print "1. fight %s" % creature.name
+    print "2. do nothing"
+    print "3. flee"
+    print "> ",
+    input = raw_input()
+    os.system("clear")
+    return input
+
 
 def main():
-    hero = Hero(10,5)
-    goblin = Goblin(6,2)
+    os.system("clear")
+    hero = Hero(10,5,"hero")
+    goblin = Zombie(1,1,"zombie")
+    # goblin = Goblin(6,2,"goblin")
 
-    while goblin.health > 0 and hero.health> 0:
-        print "You have %d health and %d power." % (hero.health, hero.power)
-        print "The %s has %d health and %d power." % (goblin.name,goblin.health, goblin.power)
-        print
-        print "What do you want to do?"
-        print "1. fight goblin"
-        print "2. do nothing"
-        print "3. flee"
-        print "> ",
-        input = raw_input()
-        if input == "1":
+    while goblin.alive() and hero.alive():
+        hero.print_status()
+        goblin.print_status()
+        input = make_choice(goblin)
+        if input == "1": #attack
             hero.attack(goblin)
-        elif input == "2":
+        elif input == "2": #do nothing
             pass
-        elif input == "3":
-            print "Goodbye."
+        elif input == "3": #flee
+            print "Chicken!"
             break
         else:
             print "Invalid input %r" % input
 
-        if goblin.health > 0:
+        if goblin.alive():
             goblin.attack(hero)
 
 main()
