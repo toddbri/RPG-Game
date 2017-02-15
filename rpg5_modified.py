@@ -32,15 +32,27 @@ class Character(object):
         if self.health <= 0:
             print "%s is dead." % self.name
 
-class Shifter(Character):
+class Dramatic(Character):
+    import sys
     def __init__(self):
-        self.name = 'shifter'
-        self.health = 9
-        self.power = 4
+        self.name = 'dramatic'
+        self.health = 20
+        self.power = 2
         self.coins = 15
+        self.statements =["Oh gosh! that really hurt","wait, wait, wait, give me a few minutes",
+                         "Really, you had to do that?", "I'm having a bad day....\n\n\n can we continue this later?",
+                         "Please don't hurt me anymore", "How about we stop this and get some coffee?",
+                         "give me a few minutes, just gotta finish something up","Damn, that is going to leave a stain"]
 
     def receive_damage(self,points):
-        pass
+        print "%s says: " % self.name
+        Dramatic.sys.stdout.write("\033[1;31m")
+        print self.statements[int(random.random()*len(self.statements))].upper()
+        Dramatic.sys.stdout.write("\033[0;0m")
+        super(Dramatic, self).receive_damage(points)
+
+class Shifter(Character):
+    import inspect as Inspector
 
 class Renewer(Character):
     def __init__(self):
@@ -221,7 +233,7 @@ battle_engine = Battle()
 shopping_engine = Store()
 
 for enemy in enemies:
-    hero_won = battle_engine.do_battle(hero,Renewer())
+    hero_won = battle_engine.do_battle(hero,Dramatic())
     # hero_won = battle_engine.do_battle(hero, enemy)
     if not hero_won:
         print "YOU LOSE!"
